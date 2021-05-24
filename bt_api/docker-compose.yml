@@ -1,0 +1,26 @@
+version: '3.6'
+
+services:
+  db:
+    #image: postgres:9.6-alpine
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+    ports:
+      - 18941:5432
+
+  bt_api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - RUST_BACKTRACE=1
+      - RUST_LOG=debug
+      - ROCKET_ADDRESS=0.0.0.0
+      - ROCKET_PORT=8000
+      - DATABASE_URL=postgres://username:password@db:5432/postgres
+    ports:
+      - "8000:8000"
