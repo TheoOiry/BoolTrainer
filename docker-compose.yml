@@ -1,0 +1,33 @@
+version: '3.6'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+    ports:
+      - 18941:5432
+
+  bt_api:
+    image: theooiry/bt_api
+    build: bt_api
+    environment:
+      - RUST_BACKTRACE=1
+      - RUST_LOG=critical
+      - ROCKET_ADDRESS=0.0.0.0
+      - ROCKET_PORT=8080
+      - DATABASE_URL=postgres://username:password@db:5432/postgres
+      - JWT_SECRET=3nEU6FVYvVi
+    ports:
+      - "8080:8080"
+
+  bt_front:
+    image: theooiry/bt_front
+    build: bt_front
+    environment:
+      - VUE_APP_API_URI=http://localhost:8080/api
+    ports:
+      - "80:80"

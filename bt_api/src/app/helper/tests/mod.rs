@@ -1,8 +1,6 @@
 use super::jwt;
-use std::collections::BTreeMap;
-use crate::app::helper::jwt::jwt_decode;
-use serde::{Deserialize, Serialize};
 use dotenv::dotenv;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 struct Claims {
@@ -13,7 +11,10 @@ struct Claims {
 #[test]
 fn jwt_encode_decode() {
     dotenv().ok();
-    let base_claims = Claims { exp: 10000000000, data: String::from("some data") };
+    let base_claims = Claims {
+        exp: 10000000000,
+        data: String::from("some data"),
+    };
 
     let decoded_claims: Claims = jwt::jwt_decode(&jwt::jwt_encode(&base_claims)).unwrap();
 

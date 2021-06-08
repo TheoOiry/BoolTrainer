@@ -1,15 +1,22 @@
 use rocket;
 
+use crate::app::handler;
 use crate::connection;
 use rocket::Rocket;
-use crate::app::handler;
+use rocket::fairing::AdHoc;
+use rocket_cors::{CorsOptions, AllowedOrigins};
 
 pub fn get_rocket() -> Rocket {
     rocket::ignite()
         .manage(connection::init_pool())
-        .mount("/api",
-               routes![
-                    handler::create_session
-                    ],
-        )
+        .attach(AdHoc::on_attach("Database Migrations", connection::run_db_migrations))
+        .attach(CorsOptions::default().allowed_origins(AllowedOrigins::all()).to_cors().unwrap())
+        .mount(
+        "/api",
+        routes![
+            handler::create_session,
+            handler::create_game,
+            handler::answer_round,
+        ],
+    )
 }

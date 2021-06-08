@@ -1,12 +1,11 @@
 use std::env;
 use std::ops::Deref;
-
 use diesel::pg::PgConnection;
-use r2d2;
 use r2d2_diesel::ConnectionManager;
-use rocket::{Outcome, Request, State};
 use rocket::http::Status;
 use rocket::request::{self, FromRequest};
+use rocket::{Outcome, Request, State, Rocket};
+use diesel::Connection;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
@@ -15,7 +14,7 @@ pub fn init_pool() -> Pool {
     Pool::new(manager).expect("db pool")
 }
 
-fn database_url() -> String {
+pub fn database_url() -> String {
     env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
 
@@ -38,5 +37,18 @@ impl Deref for DbConn {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+embed_migrations!();
+
+pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
+    let conn = PgConnection::establish(&database_url()).unwrap();
+    match embedded_migrations::run(&conn) {
+        Ok(()) => Ok(rocket),
+        Err(e) => {
+            println!("Failed to run database migrations: {:?}", e);
+            Err(rocket)
+        }
     }
 }

@@ -1,18 +1,29 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-link to="/game">Start!</router-link>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
+  methods: {
+
+  },
+  beforeMount() {
+    if (!this.$store.getters.is_logged) {
+      const requestOptions = {
+        method: 'POST'
+      };
+
+      fetch(`${process.env.VUE_APP_API_URI}/create_session`, requestOptions)
+        .then(res => res.json())
+        .then(res => {
+          this.$store.commit("setToken", res.jwt_token)
+        })
+        .catch(err => console.log(err))
+    }
   }
 }
 </script>

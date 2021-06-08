@@ -1,3 +1,3 @@
-CREATE TABLE "SESSION" (
-    uuid UUID PRIMARY KEY
+CREATE TABLE sessions (
+    id UUID PRIMARY KEY
 );
