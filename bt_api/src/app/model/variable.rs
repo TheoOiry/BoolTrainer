@@ -52,4 +52,12 @@ impl Variable {
     pub fn get_item_id(&self) -> uuid::Uuid {
         self.item_id
     }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn get_value(&self) -> &str {
+        &self.value
+    }
 }

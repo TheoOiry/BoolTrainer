@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::fmt::Display;
 use std::rc::Rc;
+use crate::app::model::variable::Variable as ModelVariable;
 
 pub trait OrdValue: Display + Clone + PartialOrd {}
 impl<T: Display + Clone + PartialOrd> OrdValue for T {}
@@ -97,6 +98,12 @@ impl<T: OrdValue> Variable<T> {
     }
     pub fn set_value(&mut self, data: T) {
         self.data = data
+    }
+}
+
+impl PartialEq<ModelVariable> for Variable<i32> {
+    fn eq(&self, other: &ModelVariable) -> bool {
+        self.name == other.get_name() && self.data.to_string() == other.get_value()
     }
 }
 

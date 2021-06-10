@@ -9,6 +9,7 @@ use crate::app::model::game::Game;
 use crate::app::model::item::Item;
 use crate::app::model::round::Round;
 use crate::app::model::variable::Variable;
+use crate::app::core::bool_expression::expression_option::Variable as OptionVariable;
 
 pub struct RoundGenerator<'a> {
     round: Round,
@@ -48,15 +49,28 @@ impl<'a> RoundGenerator<'a> {
     fn fill_items(&mut self) {
         for _ in 0..5 {
             self.bool_expression.randomize_variables();
+            while self.check_variables_already_exists(&self.bool_expression.get_current_variables_state()) {
+                self.bool_expression.randomize_variables();
+            }
+
             let new_item = Item::insert(
                 &self.round,
                 self.bool_expression.get_result(),
                 self.connection,
             )
             .unwrap();
+
             self.fill_variables(new_item);
             self.items.push(new_item);
         }
+    }
+
+    fn check_variables_already_exists(&self, variables: &[OptionVariable<i32>]) -> bool {
+        variables.len() > 0 &&
+            self.variables.iter()
+                .any(|(_, variable_col)| variable_col.iter()
+                    .all(|variable_from_col| variables.iter()
+                        .any(|variable_from_checked| variable_from_checked == variable_from_col)))
     }
 
     fn fill_variables(&mut self, item: Item) {

@@ -16,3 +16,11 @@ fn round_generator() {
 
     println!("{}", generator.get_round_json().to_string());
 }
+
+#[test]
+#[ignore]
+fn generate_hundred_round() {
+    for _ in 0..100 {
+        round_generator();
+    }
+}
