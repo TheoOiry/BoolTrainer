@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    <router-link to="/game">Start!</router-link>
+    <div v-if="isLoaded">
+      <router-link to="/game">Start!</router-link>
+    </div>
   </div>
 </template>
 
@@ -8,22 +10,14 @@
 
 export default {
   name: 'Home',
-  methods: {
-
-  },
-  beforeMount() {
-    if (!this.$store.getters.is_logged) {
-      const requestOptions = {
-        method: 'POST'
-      };
-
-      fetch(`${process.env.VUE_APP_API_URI}/create_session`, requestOptions)
-        .then(res => res.json())
-        .then(res => {
-          this.$store.commit("setToken", res.jwt_token)
-        })
-        .catch(err => console.log(err))
+  data: function () {
+    return {
+      isLoaded: false
     }
+  },
+  async beforeMount() {
+    await this.$store.commit("setToken")
+    this.isLoaded = true;
   }
 }
 </script>

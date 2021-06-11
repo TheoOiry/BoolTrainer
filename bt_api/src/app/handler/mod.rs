@@ -11,6 +11,11 @@ use crate::app::model::game::Game;
 use crate::app::model::session::Session;
 use crate::connection::DbConn;
 
+#[get("/ping_session")]
+pub fn ping_session(_conn: DbConn, _session: Session) -> Status {
+    Status::Ok
+}
+
 #[post("/create_session")]
 pub fn create_session(conn: DbConn) -> Result<ApiResponse, Status> {
     let jwt_token = Session::insert(&conn)

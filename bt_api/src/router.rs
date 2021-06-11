@@ -17,6 +17,7 @@ pub fn get_rocket() -> Rocket {
             handler::create_session,
             handler::create_game,
             handler::answer_round,
+            handler::ping_session,
         ],
     )
 }
