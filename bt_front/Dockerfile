@@ -1,9 +1,11 @@
 # étape de build
-FROM node as build-stage
+FROM node:16 as build-stage
 WORKDIR /app
 COPY package*.json ./
+RUN export NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install
 COPY . .
+RUN npx browserslist@latest --update-db
 RUN npm run build
 
 # étape de production
