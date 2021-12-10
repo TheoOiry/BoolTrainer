@@ -1,6 +1,6 @@
 <template>
   <div class="variable">
-    {{ variable.name }} = {{ variable.value }}
+    {{ variable.name }} = {{ variable.value }};
   </div>
 </template>
 

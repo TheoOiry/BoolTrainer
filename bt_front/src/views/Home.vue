@@ -1,7 +1,11 @@
 <template>
   <div class="home">
-    <div v-if="isLoaded">
-      <router-link to="/game">Start!</router-link>
+    <div class="homeContainer">
+      <h1>Bool trainer</h1>
+      <p>The first training application for boolean expressions.</p>
+      <router-link to="/game">
+        <button id="buttonStart" class="grow">Start !</button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -10,14 +14,26 @@
 
 export default {
   name: 'Home',
-  data: function () {
-    return {
-      isLoaded: false
-    }
-  },
-  async beforeMount() {
-    await this.$store.commit("setToken")
-    this.isLoaded = true;
-  }
 }
 </script>
+
+<style scoped>
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+p {
+  margin-top: 0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+}
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

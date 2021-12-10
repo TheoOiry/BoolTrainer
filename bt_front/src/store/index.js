@@ -17,21 +17,29 @@ let get_token = async function () {
 
 export default new Vuex.Store({
   state: {
-    session_token: get_token(),
+    session_token: null,
   },
   mutations: {
+    changeToken(state, { newToken }) {
+      state.session_token = newToken
+    },
+  },
+  actions: {
     async setToken (state) {
       const token = await get_token();
-      state.session_token = token
+      this.commit('changeToken', { token });
+      console.log('1', state.session_token);
       localStorage.setItem("session_token", token)
     },
   },
   getters: {
     auth_full_header: state => ({"Authorization": state.session_token}),
     is_logged: async state => {
+      console.log('2',state.session_token);
       if (state.session_token === undefined) {
         state.session_token = await get_token();
       }
+      console.log('3',state.session_token);
       return state.session_token !== null
     }
   },

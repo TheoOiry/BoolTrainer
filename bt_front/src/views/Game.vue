@@ -1,10 +1,12 @@
 <template>
   <div class="game">
-    <div v-if="game_result">
-      <Result :results="game_result" />
-    </div>
-    <div v-else-if="current_round">
-      <Round :game_id="game_id" :round="current_round" @nextRound="next_round" />
+    <div class="">
+      <div v-if="game_result">
+        <Result :results="game_result"/>
+      </div>
+      <div v-else-if="current_round">
+        <Round :game_id="game_id" :round="current_round" @nextRound="next_round"/>
+      </div>
     </div>
   </div>
 </template>
@@ -13,6 +15,7 @@
 
 import Round from "../components/Round";
 import Result from "../components/result/Result";
+
 export default {
   name: "Game",
   components: {Round, Result},
@@ -24,7 +27,7 @@ export default {
     }
   },
   methods: {
-    load_game: function() {
+    load_game: function () {
       const requestOptions = {
         method: 'POST',
         headers: this.$store.getters.auth_full_header,
@@ -39,7 +42,7 @@ export default {
         .catch(err => console.log(err))
     },
     next_round: function (res) {
-      if("score" in res) {
+      if ("score" in res) {
         this.game_result = res
       } else {
         this.current_round = res.next_round;
@@ -47,7 +50,8 @@ export default {
     }
   },
   async created() {
-    if (!this.$store.getters.is_logged) {
+    await this.$store.dispatch("setToken");
+    if (!(await this.$store.getters.is_logged)) {
       await this.$router.push("Home")
       return
     }
@@ -58,5 +62,19 @@ export default {
 </script>
 
 <style scoped>
+.game {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameContainer {
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 0.25rem 1rem;
+  padding: 20px;
+  min-width: 350px;
+}
+
 
 </style>

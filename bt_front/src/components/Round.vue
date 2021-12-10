@@ -1,8 +1,16 @@
 <template>
   <div class="round">
-    <code>{{ round.expression }}</code>
-    <Item v-for="item in round.items" :key="item.item_id" :item="item" @setAnswer="set_answer"></Item>
-    <button @click="send_answer">Next</button>
+    <div class="boxShadow">
+      Expression
+      <div class="boxShadowCode">
+        <code>{{ round.expression }}</code>
+      </div>
+    </div>
+
+    <div class="boxShadow">
+      <Item v-for="item in round.items" :key="item.item_id" :item="item" @setAnswer="set_answer"></Item>
+      <button class="grow" @click="send_answer">Next</button>
+    </div>
   </div>
 </template>
 
@@ -46,5 +54,29 @@ export default {
 </script>
 
 <style scoped>
+
+.round{
+  min-width: 500px;
+}
+
+.boxShadow > * {
+  margin: 5px 0;
+}
+
+.boxShadow button{
+  margin-top: 20px;
+}
+
+.boxShadowCode{
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  margin: 10px 0;
+  padding: 20px;
+  max-width: 400px;
+  box-shadow: none !important;
+  background-color: #383838;
+  color: white;
+}
 
 </style>
