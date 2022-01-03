@@ -129,7 +129,7 @@ jobs:
         ports:
           - 18432:5432
       api:
-        image: ${{ env.DOCKER_REPO }}
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/bool_trainer_api
         ports:
           - 8080:8080
     steps:
