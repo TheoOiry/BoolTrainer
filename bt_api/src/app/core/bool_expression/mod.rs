@@ -6,7 +6,7 @@ mod tests;
 use expression_option::{BoolOption, Variable, VariableCell};
 use rand::{thread_rng, Rng};
 use std::borrow::Borrow;
-use std::cell::{Ref, RefCell};
+use std::cell::RefCell;
 
 pub struct BoolExpression {
     variables: Vec<VariableCell<i32>>,

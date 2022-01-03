@@ -3,13 +3,13 @@ use std::collections::HashMap;
 use diesel::PgConnection;
 use rocket_contrib::json::JsonValue;
 
+use crate::app::core::bool_expression::expression_option::Variable as OptionVariable;
 use crate::app::core::bool_expression::generator::ExpressionGenerator;
 use crate::app::core::bool_expression::BoolExpression;
 use crate::app::model::game::Game;
 use crate::app::model::item::Item;
 use crate::app::model::round::Round;
 use crate::app::model::variable::Variable;
-use crate::app::core::bool_expression::expression_option::Variable as OptionVariable;
 
 pub struct RoundGenerator<'a> {
     round: Round,
@@ -25,7 +25,10 @@ impl<'a> RoundGenerator<'a> {
         round_generator.fill_items();
 
         while round_generator.items.iter().all(|item| item.get_expected())
-            || round_generator.items.iter().all(|item| !item.get_expected())
+            || round_generator
+                .items
+                .iter()
+                .all(|item| !item.get_expected())
         {
             round_generator.round.delete(conn).ok();
             round_generator = Self::new(game, conn);
@@ -38,7 +41,7 @@ impl<'a> RoundGenerator<'a> {
     fn new(game: &Game, conn: &'a PgConnection) -> RoundGenerator<'a> {
         let bool_expression = ExpressionGenerator::build();
         RoundGenerator {
-            round: Round::insert(&game, bool_expression.to_string(), conn).unwrap(),
+            round: Round::insert(game, bool_expression.to_string(), conn).unwrap(),
             bool_expression,
             items: vec![],
             variables: HashMap::new(),
@@ -49,7 +52,9 @@ impl<'a> RoundGenerator<'a> {
     fn fill_items(&mut self) {
         for _ in 0..5 {
             self.bool_expression.randomize_variables();
-            while self.check_variables_already_exists(&self.bool_expression.get_current_variables_state()) {
+            while self
+                .check_variables_already_exists(&self.bool_expression.get_current_variables_state())
+            {
                 self.bool_expression.randomize_variables();
             }
 
@@ -66,11 +71,14 @@ impl<'a> RoundGenerator<'a> {
     }
 
     fn check_variables_already_exists(&self, variables: &[OptionVariable<i32>]) -> bool {
-        variables.len() > 0 &&
-            self.variables.iter()
-                .any(|(_, variable_col)| variable_col.iter()
-                    .all(|variable_from_col| variables.iter()
-                        .any(|variable_from_checked| variable_from_checked == variable_from_col)))
+        !variables.is_empty()
+            && self.variables.iter().any(|(_, variable_col)| {
+                variable_col.iter().all(|variable_from_col| {
+                    variables
+                        .iter()
+                        .any(|variable_from_checked| variable_from_checked == variable_from_col)
+                })
+            })
     }
 
     fn fill_variables(&mut self, item: Item) {
@@ -83,7 +91,7 @@ impl<'a> RoundGenerator<'a> {
             .get_current_variables_state()
             .iter()
             .map(|option_variable| {
-                Variable::insert(&item, option_variable, self.connection).unwrap()
+                Variable::insert(item, option_variable, self.connection).unwrap()
             })
             .collect::<Vec<Variable>>()
     }

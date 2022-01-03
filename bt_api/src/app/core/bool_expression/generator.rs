@@ -79,23 +79,18 @@ impl ExpressionGenerator {
             0 => Value::Const(thread_rng().gen_range(0..5)),
             _ => {
                 let variable = self.potential_variables.choose(&mut thread_rng()).unwrap();
-                self.add_variable_to_used(&variable);
+                self.add_variable_to_used(variable);
                 Value::Compute(Rc::clone(variable))
             }
         }
     }
 
     fn add_variable_to_used(&self, variable: &VariableCell<i32>) {
-        if !self
-            .used_variables
-            .borrow()
-            .iter()
-            .any(|var| {
-                let var1: &RefCell<Variable<i32>> = var.borrow();
-                let var2: &RefCell<Variable<i32>> = variable.borrow();
-                var1.borrow().get_name() == var2.borrow().get_name()
-            })
-        {
+        if !self.used_variables.borrow().iter().any(|var| {
+            let var1: &RefCell<Variable<i32>> = var.borrow();
+            let var2: &RefCell<Variable<i32>> = variable.borrow();
+            var1.borrow().get_name() == var2.borrow().get_name()
+        }) {
             self.used_variables.borrow_mut().push(Rc::clone(variable));
         }
     }

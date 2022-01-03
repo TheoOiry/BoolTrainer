@@ -34,8 +34,8 @@ impl<'a> RoundAnswer<'a> {
 
     fn apply_answer(&self) -> Result<(), Status> {
         for item_answer in self.get_items_answer()? {
-            let item = Item::get(item_answer.item_id, self.connection)
-                .map_err(|_| Status::BadRequest)?;
+            let item =
+                Item::get(item_answer.item_id, self.connection).map_err(|_| Status::BadRequest)?;
 
             item.set_answer(item_answer.answer, self.connection);
         }
@@ -44,7 +44,9 @@ impl<'a> RoundAnswer<'a> {
     }
 
     fn get_items_answer(&self) -> Result<Vec<ItemAnswer>, Status> {
-        let answers: Value = self.json_request.get("answers")
+        let answers: Value = self
+            .json_request
+            .get("answers")
             .ok_or(Status::BadRequest)?
             .clone();
 

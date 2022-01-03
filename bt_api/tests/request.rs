@@ -3,11 +3,11 @@
 extern crate serde_derive;
 use bt_api::router;
 use dotenv::dotenv;
-use serde_json::json;
 use regex::Regex;
-use rocket::local::{Client, LocalResponse, LocalRequest};
+use rocket::http::{ContentType, Header};
+use rocket::local::{Client, LocalRequest, LocalResponse};
+use serde_json::json;
 use serde_json::Value;
-use rocket::http::{Header, ContentType};
 
 fn get_client() -> Client {
     dotenv().ok();
@@ -31,19 +31,19 @@ fn create_session() {
 
 struct ClientSession {
     client: Client,
-    session_jwt: String
+    session_jwt: String,
 }
 
 impl ClientSession {
     pub fn new() -> Self {
-        let session_jwt =  get_json_from("/api/create_session")["jwt_token"]
+        let session_jwt = get_json_from("/api/create_session")["jwt_token"]
             .as_str()
             .unwrap()
             .to_owned();
 
         ClientSession {
             client: get_client(),
-            session_jwt
+            session_jwt,
         }
     }
 
@@ -67,7 +67,6 @@ impl ClientSession {
         req.add_header(ContentType::JSON);
         self.get_json_from_response(req.dispatch())
     }
-
 }
 
 #[test]
@@ -75,23 +74,32 @@ fn full_game_scenario() {
     let client = ClientSession::new();
     let create_game_json = client.send_with_session("/api/create_game");
     let game_id = create_game_json["game_id"].as_str().unwrap();
-    let mut item_id = create_game_json["first_round"]["items"][0]["item_id"].as_str().unwrap().to_owned();
+    let mut item_id = create_game_json["first_round"]["items"][0]["item_id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
 
     for _ in 0..4 {
         let json_response = client.send_json_with_session(
             "/api/answer_round",
-            get_json_to_send_response(&item_id, game_id)
+            get_json_to_send_response(&item_id, game_id),
         );
 
-        item_id = json_response["next_round"]["items"][0]["item_id"].as_str().unwrap().to_owned();
+        item_id = json_response["next_round"]["items"][0]["item_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
     }
 
     let json_response_results = client.send_json_with_session(
         "/api/answer_round",
-        get_json_to_send_response(&item_id, game_id)
+        get_json_to_send_response(&item_id, game_id),
     );
 
-    assert_eq!(json_response_results["score"]["nb_items"].as_i64().unwrap(), 25);
+    assert_eq!(
+        json_response_results["score"]["nb_items"].as_i64().unwrap(),
+        25
+    );
 }
 
 fn get_json_to_send_response(item_id: &str, game_id: &str) -> Value {

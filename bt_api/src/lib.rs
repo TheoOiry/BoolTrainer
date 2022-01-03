@@ -13,7 +13,8 @@ extern crate serde_derive;
 extern crate chrono;
 extern crate jsonwebtoken;
 extern crate uuid;
-#[macro_use] extern crate diesel_migrations;
+#[macro_use]
+extern crate diesel_migrations;
 
 pub mod app;
 mod connection;

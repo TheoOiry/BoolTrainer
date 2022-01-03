@@ -54,7 +54,10 @@ impl<'a> RoundResult<'a> {
                 .iter()
                 .find(|round| round.get_id() == item.get_round_id())
                 .unwrap();
-            self.items.entry(round.clone()).or_insert_with(Vec::new).push(item);
+            self.items
+                .entry(round.clone())
+                .or_insert_with(Vec::new)
+                .push(item);
         }
     }
 

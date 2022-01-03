@@ -9,33 +9,19 @@ use std::rc::Rc;
 fn basic_expressions() {
     assert_eq!(
         false,
-        BoolOption::And(vec![
-            BoolOption::Const(true),
-            BoolOption::Const(false)
-        ])
-        .get_result()
+        BoolOption::And(vec![BoolOption::Const(true), BoolOption::Const(false)]).get_result()
     );
 
     assert_eq!(
         true,
-        BoolOption::Or(vec![
-            BoolOption::Const(true),
-            BoolOption::Const(false)
-        ])
-        .get_result()
+        BoolOption::Or(vec![BoolOption::Const(true), BoolOption::Const(false)]).get_result()
     );
 }
 
 #[test]
 fn recursive_expressions() {
-    let expression = BoolOption::And(vec![
-        BoolOption::Const(true),
-        BoolOption::Const(true),
-    ]);
-    let expression = BoolOption::And(vec![
-        expression,
-        BoolOption::Const(true),
-    ]);
+    let expression = BoolOption::And(vec![BoolOption::Const(true), BoolOption::Const(true)]);
+    let expression = BoolOption::And(vec![expression, BoolOption::Const(true)]);
 
     assert_eq!(true, expression.get_result());
 }
@@ -51,14 +37,8 @@ fn ord_expression() {
 
 #[test]
 fn basic_expression_to_string() {
-    let and_expr = BoolOption::And(vec![
-        BoolOption::Const(true),
-        BoolOption::Const(false),
-    ]);
-    let or_expr = BoolOption::Or(vec![
-        BoolOption::Const(true),
-        BoolOption::Const(false),
-    ]);
+    let and_expr = BoolOption::And(vec![BoolOption::Const(true), BoolOption::Const(false)]);
+    let or_expr = BoolOption::Or(vec![BoolOption::Const(true), BoolOption::Const(false)]);
     let not_expr = BoolOption::Not(Box::from(BoolOption::Const(false)));
     let ord_expr = BoolOption::OrdExpr(Box::from(OrdOption::Greater(
         Value::Const(5),
@@ -81,10 +61,7 @@ fn recursive_expression() {
         Value::Const(4),
         Value::Const(2),
     )));
-    let true_or_for_equals_two = BoolOption::Or(vec![
-        BoolOption::Const(true),
-        for_equals_two,
-    ]);
+    let true_or_for_equals_two = BoolOption::Or(vec![BoolOption::Const(true), for_equals_two]);
     let expression = BoolOption::Not(Box::from(BoolOption::And(vec![
         five_greater_two,
         true_or_for_equals_two,

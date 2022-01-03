@@ -1,7 +1,7 @@
+use crate::app::model::variable::Variable as ModelVariable;
 use std::cell::RefCell;
 use std::fmt::Display;
 use std::rc::Rc;
-use crate::app::model::variable::Variable as ModelVariable;
 
 pub trait OrdValue: Display + Clone + PartialOrd {}
 impl<T: Display + Clone + PartialOrd> OrdValue for T {}
@@ -42,12 +42,8 @@ impl BoolOption {
             BoolOption::Const(bool) => *bool,
             BoolOption::OrdExpr(ord_expr) => ord_expr.get_result(),
             BoolOption::Not(expr) => !expr.get_result(),
-            BoolOption::And(col_expr) => col_expr
-                .iter()
-                .all(|expr| expr.get_result()),
-            BoolOption::Or(col_expr) => col_expr
-                .iter()
-                .any(|expr| expr.get_result()),
+            BoolOption::And(col_expr) => col_expr.iter().all(|expr| expr.get_result()),
+            BoolOption::Or(col_expr) => col_expr.iter().any(|expr| expr.get_result()),
         }
     }
 
