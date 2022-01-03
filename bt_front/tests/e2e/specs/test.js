@@ -9,7 +9,7 @@ describe('My First Test', () => {
     cy.url().should('include', '/game')
   })
 
-  it('should ', () => {
+  it('should start', () => {
     cy.visit('/')
     cy.get('#buttonStart').click()
     cy.get('.boxShadowCode', )
