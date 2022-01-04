@@ -112,7 +112,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build and push front
         uses: docker/build-push-action@v2
         with:
           context: ./bt_api
@@ -164,3 +164,84 @@ jobs:
           start: npm run serve -- --port 3000
           browser: chrome
           working-directory: ./bt_front
+  build_and_push_front:
+    name: Build and push Front
+    needs: [test_front]
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-front
+          key: ${{ runner.os }}-buildx-front-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-front-
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push front
+        uses: docker/build-push-action@v2
+        with:
+          context: ./bt_front
+          file: ./bt_front/Dockerfile
+          push: true
+          tags: nvenard/bool_trainer_front:latest
+          cache-from: type=local,src=/tmp/.buildx-cache-front
+          cache-to: type=local,dest=/tmp/.buildx-cache-front-new
+      -
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache-front
+          mv /tmp/.buildx-cache-front-new /tmp/.buildx-cache-front
+  deploy:
+    runs-on: self-hosted
+    name: Deployment
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: Remove containers
+        run: |
+          docker container rm -f bt_api bt_front bt_db
+
+      - name: Pull new images
+        run: |
+          docker pull bool_trainer_front:latest
+          docker pull bool_trainer_api:latest
+      - name: Run db
+        run: |
+          docker container run --name bt_db -d \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_DB=postgres \
+            postgres
+      - name: Run api
+        run: |
+          docker container run --name bt_api -d \
+            -e RUST_BACKTRACE=1 \
+            -e RUST_LOG=critical \
+            -e ROCKET_ADDRESS=0.0.0.0 \
+            -e ROCKET_PORT=8080 \
+            -e DATABASE_URL=postgres://postgres:postgres@bt_db:5432/postgres \
+            -e JWT_SECRET=3nEU6FVYvVi \
+            bool_trainer_api:latest
+      - name: Run api
+        run: |
+          docker container run --name bt_front -d \
+            -e VUE_APP_API_URI=http://bt_api:8080/api \
+            -p 80:80 \
+            bool_trainer_front:latest
