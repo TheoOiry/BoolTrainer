@@ -149,7 +149,7 @@ jobs:
           RUST_LOG: critical
           ROCKET_ADDRESS: 0.0.0.0
           ROCKET_PORT: 8080
-          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:18432/postgres
+          DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
           JWT_SECRET: 3nEU6FVYvVi
         ports:
           - 8080:8080
