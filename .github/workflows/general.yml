@@ -144,6 +144,13 @@ jobs:
           - 18432:5432
       api:
         image: nvenard/bool_trainer_api
+        env:
+          RUST_BACKTRACE: 1
+          RUST_LOG: critical
+          ROCKET_ADDRESS: 0.0.0.0
+          ROCKET_PORT: 8080
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:18432/postgres
+          JWT_SECRET: 3nEU6FVYvVi
         ports:
           - 8080:8080
     steps:
@@ -154,6 +161,6 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: npm run build
-          start: npm run serve
+          start: npm run serve -- --port 3000
           browser: chrome
           working-directory: ./bt_front
