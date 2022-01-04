@@ -139,6 +139,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          build: npm --prefix ./bt_front run build
-          start: npm --prefix ./bt_front start
+          build: npm run build
+          start: npm start
           working-directory: ./bt_front
