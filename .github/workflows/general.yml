@@ -210,28 +210,29 @@ jobs:
   deploy:
     runs-on: self-hosted
     name: Deployment
+    needs: [build_and_push_front]
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v2
 
       - name: Remove containers
         run: |
-          docker container rm -f bt_api bt_front bt_db
+          sudo docker container rm -f bt_api bt_front bt_db
 
       - name: Pull new images
         run: |
-          docker pull bool_trainer_front:latest
-          docker pull bool_trainer_api:latest
+          sudo docker pull bool_trainer_front:latest
+          sudo docker pull bool_trainer_api:latest
       - name: Run db
         run: |
-          docker container run --name bt_db -d \
+          sudo docker container run --name bt_db -d \
             -e POSTGRES_PASSWORD=postgres \
             -e POSTGRES_USER=postgres \
             -e POSTGRES_DB=postgres \
             postgres
       - name: Run api
         run: |
-          docker container run --name bt_api -d \
+          sudo docker container run --name bt_api -d \
             -e RUST_BACKTRACE=1 \
             -e RUST_LOG=critical \
             -e ROCKET_ADDRESS=0.0.0.0 \
@@ -241,7 +242,7 @@ jobs:
             bool_trainer_api:latest
       - name: Run api
         run: |
-          docker container run --name bt_front -d \
+          sudo docker container run --name bt_front -d \
             -e VUE_APP_API_URI=http://bt_api:8080/api \
             -p 80:80 \
             bool_trainer_front:latest
