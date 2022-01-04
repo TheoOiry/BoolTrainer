@@ -216,6 +216,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Remove containers
+        continue-on-error: true
         run: |
           sudo docker container rm -f bt_api bt_front bt_db
 
