@@ -240,10 +240,11 @@ jobs:
             -e ROCKET_PORT=8080 \
             -e DATABASE_URL=postgres://postgres:postgres@bt_db:5432/postgres \
             -e JWT_SECRET=3nEU6FVYvVi \
+            -p 8080:8080 \
             nvenard/bool_trainer_api:latest
-      - name: Run api
+      - name: Run front
         run: |
           sudo docker container run --name bt_front -d \
-            -e VUE_APP_API_URI=http://bt_api:8080/api \
+            -e VUE_APP_API_URI=http://178.62.18.62:8080/api \
             -p 80:80 \
             nvenard/bool_trainer_front:latest
