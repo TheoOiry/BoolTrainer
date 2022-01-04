@@ -222,8 +222,8 @@ jobs:
 
       - name: Pull new images
         run: |
-          sudo docker pull bool_trainer_front:latest
-          sudo docker pull bool_trainer_api:latest
+          sudo docker pull nvenard/bool_trainer_front:latest
+          sudo docker pull nvenard/bool_trainer_api:latest
       - name: Run db
         run: |
           sudo docker container run --name bt_db -d \
@@ -240,10 +240,10 @@ jobs:
             -e ROCKET_PORT=8080 \
             -e DATABASE_URL=postgres://postgres:postgres@bt_db:5432/postgres \
             -e JWT_SECRET=3nEU6FVYvVi \
-            bool_trainer_api:latest
+            nvenard/bool_trainer_api:latest
       - name: Run api
         run: |
           sudo docker container run --name bt_front -d \
             -e VUE_APP_API_URI=http://bt_api:8080/api \
             -p 80:80 \
-            bool_trainer_front:latest
+            nvenard/bool_trainer_front:latest
