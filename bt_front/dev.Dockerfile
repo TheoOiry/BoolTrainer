@@ -6,7 +6,7 @@ RUN export NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install
 COPY . .
 RUN npx browserslist@latest --update-db
-RUN npm run build -- --mode production
+RUN npm run build -- --mode development
 
 # étape de production
 FROM nginx:stable-alpine as production-stage

@@ -160,8 +160,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          build: npm run build
-          start: npm run serve -- --port 3000
+          build: npm run build -- --mode development
+          start: npm run serve -- --mode development --port 3000
           browser: chrome
           working-directory: ./bt_front
   build_and_push_front:
@@ -245,6 +245,5 @@ jobs:
       - name: Run front
         run: |
           sudo docker container run --name bt_front -d \
-            -e VUE_APP_API_URI=http://178.62.18.62:8080/api \
             -p 80:80 \
             nvenard/bool_trainer_front:latest
