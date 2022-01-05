@@ -26,7 +26,7 @@ services:
 
   bt_front:
     image: theooiry/bt_front
-    build: bt_front
+    build: bt_front/dev.Dockerfile
     environment:
       - VUE_APP_API_URI=http://localhost:8080/api
     ports:

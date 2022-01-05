@@ -230,6 +230,7 @@ jobs:
             -e POSTGRES_PASSWORD=postgres \
             -e POSTGRES_USER=postgres \
             -e POSTGRES_DB=postgres \
+            --network bt_network \
             postgres
       - name: Run api
         run: |
@@ -240,6 +241,7 @@ jobs:
             -e ROCKET_PORT=8080 \
             -e DATABASE_URL=postgres://postgres:postgres@bt_db:5432/postgres \
             -e JWT_SECRET=3nEU6FVYvVi \
+            --network bt_network \
             -p 8080:8080 \
             nvenard/bool_trainer_api:latest
       - name: Run front
